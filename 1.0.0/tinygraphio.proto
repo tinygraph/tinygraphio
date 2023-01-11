@@ -1,0 +1,82 @@
+syntax = "proto2";
+
+package tinygraphio;
+
+option optimize_for = LITE_RUNTIME;
+
+// The graph data interchange file format tinygraphio.
+//
+// The tinygraphio format stores a directed (or bidirectional) graph
+// in a compressed sparse row format for a compact representation.
+// This format minimizes storage use to O(n + m) where n and m are
+// the number of vertices and edges, respectively.
+//
+// The on-disk representation of the compressed sparse row graph
+// is based on the message schemata defined below. You will find
+// it being inspired by the RecordIO file format for records.
+//
+// The format is outlined as follows (start to end):
+//
+// FileHeader | GraphHeader | [GraphChunkSize | GraphChunk]
+//
+// The FileHeader describes the specific tinygraphio format
+// and file metadata. The file header is the only schema that
+// is guaranteed to stay consistent across schema evolution
+// in the future. Read the file header first, and based on
+// its version number decide if you can handle it or not.
+//
+// The GraphHeader describes graph metadata.
+//
+// The multiple GraphChunkSize and GraphChunk blocks describe
+// parts of the graph to split the graph into smaller pieces.
+// The GraphChunkSize is the byte-size prefix for the following
+// GraphChunk represented as a varint so that messages can be
+// read from the byte stream (framing). The GraphChunk contains
+// the compressed sparse row format offset and target arrays,
+// with offsets being delta encoded for compact varints.
+
+// Globally unique file header located at the very start
+// of the tinygraphio file containing file specific metadata.
+// The file header schema is guaranteed to stay consistent
+// across schema evolution in the future.
+message FileHeader {
+  // The version of this tinygraphio file for evolving the
+  // file format and being able to detect changes.
+  required fixed64 version = 1;
+
+  // The checksum for the file contents. The checksum
+  // algorithm is version specific and is e.g. CRC32C.
+  required fixed64 checksum = 2;
+}
+
+// Globally unique graph header, located after the file
+// header in the tinygraphio file, with graph specific
+// metadata.
+message GraphHeader {
+  // Total number of nodes in this graph.
+  required fixed64 nodes = 1;
+
+  // Total number of edges in this graph.
+  required fixed64 edges = 2;
+}
+
+// Graph chunks represent parts of the graph. They are
+// located after file and graph header. The size of
+// a chunk is application-specific. Note that offsets
+// and targets might be of different size for example
+// in the very last chunk.
+//
+// Graph chunks are byte-size prefixed with a varint,
+// so that messages can be read from the byte stream by
+// first reading the size, and then interpreting the next
+// size bytes as a graph chunk message (framing).
+message GraphChunk {
+  // The offset array in the compressed sparse row format.
+  // Because offsets are monotonically increasing, we are
+  // storing the delta-encoded offsets for even smaller
+  // varints in the offsets array.
+  repeated uint64 offsets = 1 [packed = true]; // DELTA
+
+  // The target array in the compressed sparse row format.
+  repeated uint64 targets = 2 [packed = true];
+}
