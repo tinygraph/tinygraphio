@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package tinygraphio;
+package tinygraphio.v1;
 
 option optimize_for = LITE_RUNTIME;
 

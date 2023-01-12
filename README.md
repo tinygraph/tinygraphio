@@ -10,7 +10,7 @@ The GraphIO interchange file format is versioned following [Semantic Versioning 
 
 | Version | Release | Changelog |
 | ------: | ------- | --------- |
-| [1.0.0](./1.0.0) | 2023-01-29 | First release |
+| [1.0.0](./v1) | 2023-01-29 | First release |
 
 
 ## Format
