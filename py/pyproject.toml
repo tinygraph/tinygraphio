@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "tinygraphio"
+version = "1.0.0"
+description = "The tinygraphio graph data interchange file format"
+authors = ["tinygraph <hello@tinygraph.org>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">3.8,<=4"
+protobuf = "^4.21.12"
+
+[tool.poetry.scripts]
+tinygraphio = "tinygraphio.scripts.__main__:main"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^0.991"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
