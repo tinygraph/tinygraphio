@@ -6,7 +6,7 @@ The use case tinygraphio covers is storing large graphs effectively and efficien
 
 ## Versioning
 
-The GraphIO interchange file format is versioned following [Semantic Versioning 2.0.0](https://semver.org).
+The tinygraphio interchange file format is versioned following [Semantic Versioning 2.0.0](https://semver.org).
 
 | Version | Release | Changelog |
 | ------: | ------- | --------- |
